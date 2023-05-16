@@ -42,6 +42,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_16_085605) do
     t.string "city"
     t.bigint "car_id", null: false
     t.bigint "user_id", null: false
+    t.integer "price_per_day"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["car_id"], name: "index_reservations_on_car_id"

@@ -210,6 +210,8 @@ GEM
     rubocop-ast (1.28.1)
       parser (>= 3.2.1.0)
     ruby-progressbar (1.13.0)
+    shoulda-matchers (5.3.0)
+      activesupport (>= 5.2.0)
     thor (1.2.2)
     timeout (0.3.2)
     tzinfo (2.0.6)
@@ -236,6 +238,7 @@ DEPENDENCIES
   rspec-rails
   rswag
   rubocop (>= 1.0, < 2.0)
+  shoulda-matchers
   tzinfo-data
 
 RUBY VERSION

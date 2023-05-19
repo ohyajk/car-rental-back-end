@@ -7,8 +7,5 @@ Rails.application.routes.draw do
   resources :reservations, only: [:index, :create, :destroy]
   resources :cars, only: [:index]
   root to: redirect("/api-docs", status: 302)
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  # Defines the root path route ("/")
-  # root "articles#index"
 end

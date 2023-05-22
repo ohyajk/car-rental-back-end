@@ -1,6 +1,6 @@
 class Api::V1::AuthenticationController < ApplicationController
   skip_before_action :authenticate
-  
+
   def create
     secret = ENV.fetch('JWT_SECRET_KEY', nil)
     user = User.find_by(name: params[:name])

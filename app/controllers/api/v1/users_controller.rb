@@ -4,7 +4,7 @@ class Api::V1::UsersController < ApplicationController
     @users = User.all
     render json: { users: @users }, status: :ok
   end
-  
+
   def show
     @user = User.find(params[:id])
     render json: { user: @user }, status: :ok

@@ -4,8 +4,15 @@ Rails.application.routes.draw do
   post "/auth/login", to: "authentication#login"
   
   resources :users
-  resources :reservations, only: [:index, :create, :destroy]
-  resources :cars, only: [:index]
+
+  namespace :api do
+    namespace :v1 do
+      resources :reservations, only: [:index, :create, :destroy]
+      resources :cars
+    end
+  end
   root to: redirect("/api-docs", status: 302)
 
+  post '/signup', to: 'users#create'
+  post '/login', to: 'authentication#create'
 end

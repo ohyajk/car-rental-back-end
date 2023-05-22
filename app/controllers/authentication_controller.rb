@@ -1,14 +1,13 @@
-class AuthenticationController < ApplicationController
-  skip_before_action :authenticate_request, only: [:login]
-
-  # POST /auth/login
-  def login
-    @user = User.find_by_email(params[:email])
-    if @user&.authenticate(params[:password])
-      token = jwt_encode(user_id: @user.id)
-      render json: { token:, role: @user.role }, status: :ok
+class SessionsController < ApplicationController
+  skip_before_action :authenticate
+  def create
+    secret = ENV.fetch('JWT_SECRET_KEY', nil)
+    user = User.find_by(name: params[:username])
+    if user
+      token = JWT.encode({ user_id: user.id }, secret, 'HS256')
+      render json: { username: user.name, token: }
     else
-      render json: { error: 'Invalid email or password' }, status: :unauthorized
+      render json: { error: 'Invalid username' }, status: :unauthorized
     end
   end
 end

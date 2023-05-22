@@ -1,14 +1,17 @@
 class ApplicationController < ActionController::API
-  include JsonWebToken
-
-  before_action :authenticate_request
+  # before_action :authenticate
+  attr_reader :current_user_id
 
   private
 
-  def authenticate_request
-    header = request.headers['Authorization']
-    header = header.split.last if header
-    decoded = jwt_decode(header)
-    @current_user = User.find(decoded[:user_id])
+  def authenticate
+    secret = ENV.fetch('JWT_SECRET_KEY', nil)
+    token = request.headers['Authorization']&.split&.last
+    begin
+      payload = JWT.decode(token, secret, true, algorithm: 'HS256').first
+      @current_user_id = payload['user_id']
+    rescue JWT::DecodeError
+      render json: { error: 'You are not allowed to access this api, please login' }, status: :unauthorized
+    end
   end
 end

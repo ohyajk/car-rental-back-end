@@ -3,8 +3,8 @@ require 'swagger_helper'
 RSpec.describe 'api/v1/reservations', type: :request do
   reservation_props = {
     city: { type: :string, default: 'Frankfut' },
-    starting_date: { type: :string, default: '07-04-2023' },
-    ending_date: { type: :string, default: '12-04-2023' },
+    start_date: { type: :string, default: '07-04-2023' },
+    end_date: { type: :string, default: '12-04-2023' },
     car_id: { type: :number, default: '1' }
   }
   path '/api/v1/reservations' do

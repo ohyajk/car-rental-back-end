@@ -2,9 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Car, type: :model do
   subject do
-    myuser = User.create(name: 'Eddy', username: 'pray', email: 'eddy@gmail.com', role: 'admin',
-                         password_digest: '123456')
-    Car.create(name: 'toyota', model: 'v8', description: 'the best car in the city', integer: 1, price: 200.7,
+    myuser = User.create(name: 'Eddy')
+    Car.create(name: 'toyota', model: 'v8', description: 'the best car in the city', price: 200.7,
                rent_per_day: 2, user_id: myuser.id)
   end
   before { subject.save }

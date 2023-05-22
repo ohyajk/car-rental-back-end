@@ -431,7 +431,7 @@ paths:
               - ending_date
               - car_id
 servers:
-- url: https://{defaultHost}
+- url: http://localhost:3000
   variables:
     defaultHost:
       default: www.example.com

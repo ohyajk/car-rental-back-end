@@ -33,12 +33,12 @@ RSpec.describe UsersController, type: :controller do
     context 'with valid parameters' do
       it 'creates a new user' do
         expect {
-          post :create, params: { name: 'John', email: 'john@example.com', password: 'password', role: 'user' }
+          post :create, params: { name: 'John' }
         }.to change(User, :count).by(0)
       end
 
       it 'returns a success response' do
-        post :create, params: { name: 'John', email: 'john@example.com', password: 'password', role: 'user' }
+        post :create, params: { name: 'John' }
         expect(response).to have_http_status(:created)
       end
     end
@@ -46,12 +46,12 @@ RSpec.describe UsersController, type: :controller do
     context 'with invalid parameters' do
       it 'does not create a new user' do
         expect {
-          post :create, params: { name: '', email: '', password: '', role: '' }
+          post :create, params: { name: '' }
         }.not_to change(User, :count)
       end
 
       it 'returns an error response' do
-        post :create, params: { name: '', email: '', password: '', role: '' }
+        post :create, params: { name: '' }
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
@@ -59,14 +59,14 @@ RSpec.describe UsersController, type: :controller do
 
   describe 'DELETE #destroy' do
     it 'destroys the requested user' do
-      user = User.create(name: 'John', email: 'john@example.com', password: 'password', role: 'user')
+      user = User.create(name: 'John')
       expect {
         delete :destroy, params: { id: user.id }
       }.to change(User, :count).by(0)
     end
 
     it 'returns a success response' do
-      user = User.create(name: 'John', email: 'john@example.com', password: 'password', role: 'user')
+      user = User.create(name: 'John')
       delete :destroy, params: { id: user.id }
       expect(response).to have_http_status(:ok)
     end

@@ -1,73 +1,162 @@
-require 'swagger_helper'
+require 'rails_helper'
 
-RSpec.describe 'api/v1/cars', type: :request do
-  car_props = {
-    name: { type: :string, default: 'McLaren' },
-    description: { type: :text, default: 'This is the description of McLaren' },
-    price: { type: :number, default: '25000' },
-    rent_per_day: { type: :number, default: '200' },
-    model: { type: :string, default: 'Sport' },
-    images: { type: :array, default: [
-      'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fGNhcnN8ZW58MHx8MHx8&w=1000&q=80',
-      'https://mclaren.scene7.com/is/image/mclaren/DSC00052_6:crop-1x1?wid=1200&hei=1200'
-    ] }
-  }
+describe 'Cars', type: :request do
+  let!(:user1) { create(:user) }
+  let!(:user2) { create(:user, name: 'Josh') }
+  let!(:car) { create(:car, user: user1) }
 
-  path '/api/v1/cars' do
-    get('List of cars') do
-      tags 'Cars'
-      parameter name: :filter,
-                in: :query,
-                type: :boolean,
-                description: 'Filter cars',
-                required: false
-      response(200, 'successful') do
-        run_test!
-      end
-    end
-    post('Create A Car') do
-      tags 'Cars'
-      response(201, 'Created Car successfully') do
-        consumes 'application/json'
-        produces 'application/json'
-        parameter name: :car, in: :body, schema: {
-          type: :object,
-          properties: car_props,
-          required: %w[name description price type year]
-        }
-        run_test!
-      end
+  let(:login_response) do
+    post '/login', params: { username: 'Peter' }
+    JSON.parse(response.body)
+  end
 
-      response(400, 'Operation not successful because of missing arguments or broken data') do
-        run_test!
-      end
+  # GET api/v1/cars
+  describe 'GET / with empty or invalid JWT token' do
+    it 'should return unauthorized status code' do
+      headers = {
+        Authorization: 'Bearer abc123',
+        'Content-Type': 'application/json'
+      }
+
+      get('/api/v1/cars', headers:)
+      expect(response).to have_http_status(:unauthorized)
     end
   end
 
-  path '/api/v1/cars/{id}' do
-    parameter name: 'id', in: :path, type: :string, description: 'id'
+  # GET api/v1/cars
+  describe 'GET / with valid JWT token' do
+    it 'should return ok status code' do
+      headers = {
+        Authorization: "Bearer #{login_response['token']}",
+        'Content-Type': 'application/json'
+      }
 
-    get('Show Specific Car using {id}') do
-      tags 'Cars'
-      response(200, 'successful') do
-        let(:id) { '123' }
-        run_test!
-      end
-      response(400, 'Car not found') do
-        run_test!
-      end
+      get('/api/v1/cars', headers:)
+      expect(response).to have_http_status(:ok)
     end
+  end
 
-    delete('Delete a car by {id}') do
-      tags 'Cars'
-      response(202, 'Deleted Car successfully') do
-        let(:id) { '123' }
-        run_test!
-      end
+  # POST api/v1/cars
+  describe 'POST /create with empty or invalid JWT token' do
+    it 'should return unauthorized status code' do
+      params = {
+        name: 'MERCEDES BENZ G CLASS',
+        description: 'MERCEDES G63 AMG - SERIES 21: S21-02',
+        color: 'White',
+        year: '2021',
+        price: '210',
+        type: 'Sport',
+        images:
+        [
+          'https://vossen2018.wpenginepowered.com/wp-content/uploads/2023/03/Mercedes-G63-AMG-Series-21-S21-02-%C2%A9-Vossen-Wheels-2023-611-1047x698.jpg',
+          'https://vossen2018.wpenginepowered.com/wp-content/uploads/2023/03/Mercedes-G63-AMG-Series-21-S21-02-%C2%A9-Vossen-Wheels-2023-602-1047x698.jpg',
+          'https://vossen2018.wpenginepowered.com/wp-content/uploads/2023/03/Mercedes-G63-AMG-Series-21-S21-02-%C2%A9-Vossen-Wheels-2023-613-1047x698.jpg'
+        ]
+      }
 
-      response(404, 'Car not found') do
-        run_test!
-      end
+      headers = {
+        Authorization: 'Bearer abc123',
+        'Content-Type': 'application/json'
+      }
+
+      # headers are missing
+      post '/api/v1/cars', params: JSON.dump(params)
+      expect(response).to have_http_status(:unauthorized)
+
+      post('/api/v1/cars', params: JSON.dump(params), headers:)
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
+  describe 'POST /create with invalid parameters' do
+    it 'should return bad request status code' do
+      # name is missing from params
+      params = {
+        description: 'MERCEDES G63 AMG - SERIES 21: S21-02',
+        color: 'White',
+        year: '2021',
+        price: '210',
+        type: 'Sport',
+        images:
+        [
+          'https://vossen2018.wpenginepowered.com/wp-content/uploads/2023/03/Mercedes-G63-AMG-Series-21-S21-02-%C2%A9-Vossen-Wheels-2023-611-1047x698.jpg',
+          'https://vossen2018.wpenginepowered.com/wp-content/uploads/2023/03/Mercedes-G63-AMG-Series-21-S21-02-%C2%A9-Vossen-Wheels-2023-602-1047x698.jpg',
+          'https://vossen2018.wpenginepowered.com/wp-content/uploads/2023/03/Mercedes-G63-AMG-Series-21-S21-02-%C2%A9-Vossen-Wheels-2023-613-1047x698.jpg'
+        ]
+      }
+
+      headers = {
+        Authorization: "Bearer #{login_response['token']}",
+        'Content-Type': 'application/json'
+      }
+
+      post('/api/v1/cars', params: JSON.dump(params), headers:)
+      expect(response).to have_http_status(:bad_request)
+    end
+  end
+
+  describe 'POST /create with valid parameters' do
+    it 'should return created status code' do
+      params = {
+        name: 'MERCEDES BENZ G CLASS',
+        description: 'MERCEDES G63 AMG - SERIES 21: S21-02',
+        color: 'White',
+        year: '2023',
+        price: '212',
+        car_type: 'Sport',
+        images:
+        [
+          'https://vossen2018.wpenginepowered.com/wp-content/uploads/2023/03/Mercedes-G63-AMG-Series-21-S21-02-%C2%A9-Vossen-Wheels-2023-611-1047x698.jpg',
+          'https://vossen2018.wpenginepowered.com/wp-content/uploads/2023/03/Mercedes-G63-AMG-Series-21-S21-02-%C2%A9-Vossen-Wheels-2023-602-1047x698.jpg',
+          'https://vossen2018.wpenginepowered.com/wp-content/uploads/2023/03/Mercedes-G63-AMG-Series-21-S21-02-%C2%A9-Vossen-Wheels-2023-613-1047x698.jpg'
+        ]
+      }
+
+      headers = {
+        Authorization: "Bearer #{login_response['token']}",
+        'Content-Type': 'application/json'
+      }
+
+      post('/api/v1/cars', params: JSON.dump(params), headers:)
+      expect(response).to have_http_status(:created)
+    end
+  end
+
+  describe 'DELETE /destroy with empty or invalid JWT token' do
+    it 'should return unauthorized status code' do
+      headers = {
+        Authorization: 'Bearer abc123'
+      }
+
+      # headers are missing
+      delete '/api/v1/cars/1'
+      expect(response).to have_http_status(:unauthorized)
+
+      delete('/api/v1/cars/1', headers:)
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
+  describe 'DELETE /destroy with invalid id parameter' do
+    it 'should return not found status code' do
+      headers = {
+        Authorization: "Bearer #{login_response['token']}"
+      }
+
+      # id is not a number
+      delete('/api/v1/cars/dsfsdgsdg', headers:)
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  describe 'DELETE /destroy with valid id parameter' do
+    it 'should return accepted status code' do
+      headers = {
+        Authorization: "Bearer #{login_response['token']}"
+      }
+
+      delete("/api/v1/cars/#{car.id}", headers:)
+      expect(response).to have_http_status(:accepted)
     end
   end
 end

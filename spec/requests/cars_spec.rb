@@ -6,7 +6,7 @@ describe 'Cars', type: :request do
   let!(:car) { create(:car, user: user1) }
 
   let(:login_response) do
-    post '/login', params: { username: 'Peter' }
+    post '/login', params: { username: 'John' }
     JSON.parse(response.body)
   end
 
@@ -18,7 +18,7 @@ describe 'Cars', type: :request do
         'Content-Type': 'application/json'
       }
 
-      get('/api/v1/cars', headers:)
+      get('/api/v1/cars', headers: headers)
       expect(response).to have_http_status(:unauthorized)
     end
   end
@@ -63,7 +63,7 @@ describe 'Cars', type: :request do
       post '/api/v1/cars', params: JSON.dump(params)
       expect(response).to have_http_status(:unauthorized)
 
-      post('/api/v1/cars', params: JSON.dump(params), headers:)
+      post('/api/v1/cars', params: JSON.dump(params), headers: headers)
       expect(response).to have_http_status(:unauthorized)
     end
   end
@@ -73,10 +73,9 @@ describe 'Cars', type: :request do
       # name is missing from params
       params = {
         description: 'MERCEDES G63 AMG - SERIES 21: S21-02',
-        color: 'White',
-        year: '2021',
+        model: 'G class',
         price: '210',
-        type: 'Sport',
+        rent_per_day: '2.0',
         images:
         [
           'https://vossen2018.wpenginepowered.com/wp-content/uploads/2023/03/Mercedes-G63-AMG-Series-21-S21-02-%C2%A9-Vossen-Wheels-2023-611-1047x698.jpg',
@@ -90,7 +89,7 @@ describe 'Cars', type: :request do
         'Content-Type': 'application/json'
       }
 
-      post('/api/v1/cars', params: JSON.dump(params), headers:)
+      post('/api/v1/cars', params: JSON.dump(params), headers: headers)
       expect(response).to have_http_status(:bad_request)
     end
   end
@@ -100,10 +99,9 @@ describe 'Cars', type: :request do
       params = {
         name: 'MERCEDES BENZ G CLASS',
         description: 'MERCEDES G63 AMG - SERIES 21: S21-02',
-        color: 'White',
-        year: '2023',
-        price: '212',
-        car_type: 'Sport',
+        model: 'G class',
+        price: '210',
+        rent_per_day: '2.0',
         images:
         [
           'https://vossen2018.wpenginepowered.com/wp-content/uploads/2023/03/Mercedes-G63-AMG-Series-21-S21-02-%C2%A9-Vossen-Wheels-2023-611-1047x698.jpg',
@@ -155,7 +153,7 @@ describe 'Cars', type: :request do
         'Authorization' => "Bearer #{login_response['token']}"
       }
   
-      delete("/api/v1/cars/#{car.id}", headers: headers)
+      delete("/api/v1/cars/#{car.id}", headers)
       expect(response).to have_http_status(:accepted)
     end
   end

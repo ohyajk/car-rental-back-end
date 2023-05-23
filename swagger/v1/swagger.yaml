@@ -4,47 +4,34 @@ info:
   title: API V1
   version: v1
 paths:
-  "/cars":
+  "/api/v1/cars":
     get:
-      summary: Fetches all cars
+      summary: List of cars
       tags:
       - Cars
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    name:
-                      type: string
-                    description:
-                      type: string
-                    rent_per_day:
-                      type: number
-                    user_id:
-                      type: integer
-                  required:
-                  - id
-                  - name
-                  - description
-                  - rent_per_day
-                  - user_id
+          description: successful
+      parameters:
+      - name: filter
+        in: query
+        description: Filter cars
+        required: false
+        schema:
+          type: boolean
     post:
-      summary: Creates a car
+      summary: Create A Car
       tags:
       - Cars
       parameters: []
       responses:
         '201':
-          description: car created
+          description: Created Car successfully
         '422':
           description: invalid request
+        '400':
+          description: Operation not successful because of missing arguments or broken
+            data
       requestBody:
         content:
           application/json:
@@ -53,18 +40,33 @@ paths:
               properties:
                 name:
                   type: string
+                  default: McLaren
                 description:
-                  type: string
+                  type: text
+                  default: This is the description of McLaren
+                price:
+                  type: number
+                  default: '25000'
                 rent_per_day:
                   type: number
-                user_id:
-                  type: integer
+                  default: '200'
+                model:
+                  type: string
+                  default: Sport
+                images:
+                  type: array
+                  default:
+                  - https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fGNhcnN8ZW58MHx8MHx8&w=1000&q=80
+                  - https://mclaren.scene7.com/is/image/mclaren/DSC00052_6:crop-1x1?wid=1200&hei=1200
               required:
               - name
-              - user_id
-  "/cars/{id}":
+              - description
+              - price
+              - type
+              - year
+  "/api/v1/cars/{id}":
     get:
-      summary: Retrieves a car
+      summary: Show Specific Car using {id}
       tags:
       - Cars
       parameters:
@@ -75,30 +77,11 @@ paths:
           type: integer
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  name:
-                    type: string
-                  description:
-                    type: string
-                  rent_per_day:
-                    type: number
-                  user_id:
-                    type: integer
-                required:
-                - id
-                - name
-                - description
-                - rent_per_day
-                - user_id
+          description: successful
+        '400':
+          description: Car not found
     delete:
-      summary: Deletes a car
+      summary: Delete a car by {id}
       tags:
       - Cars
       parameters:
@@ -110,6 +93,17 @@ paths:
       responses:
         '200':
           description: car deleted successfully
+        '202':
+          description: Deleted Car successfully
+        '404':
+          description: Car not found
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
   "/reservations":
     get:
       summary: Fetches all reservations
@@ -305,90 +299,6 @@ paths:
       responses:
         '200':
           description: user deleted successfully
-  "/api/v1/cars":
-    get:
-      summary: List of cars
-      tags:
-      - Cars
-      parameters:
-      - name: filter
-        in: query
-        description: Filter cars
-        required: false
-        schema:
-          type: boolean
-      responses:
-        '200':
-          description: successful
-    post:
-      summary: Create A Car
-      tags:
-      - Cars
-      parameters: []
-      responses:
-        '201':
-          description: Created Car successfully
-        '400':
-          description: Operation not successful because of missing arguments or broken
-            data
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  default: McLaren
-                description:
-                  type: text
-                  default: This is the description of McLaren
-                price:
-                  type: number
-                  default: '25000'
-                rent_per_day:
-                  type: number
-                  default: '200'
-                model:
-                  type: string
-                  default: Sport
-                images:
-                  type: array
-                  default:
-                  - https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fGNhcnN8ZW58MHx8MHx8&w=1000&q=80
-                  - https://mclaren.scene7.com/is/image/mclaren/DSC00052_6:crop-1x1?wid=1200&hei=1200
-              required:
-              - name
-              - description
-              - price
-              - type
-              - year
-  "/api/v1/cars/{id}":
-    parameters:
-    - name: id
-      in: path
-      description: id
-      required: true
-      schema:
-        type: string
-    get:
-      summary: Show Specific Car using {id}
-      tags:
-      - Cars
-      responses:
-        '200':
-          description: successful
-        '400':
-          description: Car not found
-    delete:
-      summary: Delete a car by {id}
-      tags:
-      - Cars
-      responses:
-        '202':
-          description: Deleted Car successfully
-        '404':
-          description: Car not found
   "/api/v1/reservations":
     get:
       summary: List all reservations for the current user
@@ -416,10 +326,10 @@ paths:
                 city:
                   type: string
                   default: Frankfut
-                starting_date:
+                start_date:
                   type: string
                   default: 07-04-2023
-                ending_date:
+                end_date:
                   type: string
                   default: 12-04-2023
                 car_id:

@@ -1,29 +1,39 @@
 require 'rails_helper'
 
-RSpec.describe UsersController, type: :routing do
-  describe 'routing' do
+RSpec.describe 'Users routing', type: :routing do
+  describe 'GET /api/v1/users' do
     it 'routes to #index' do
-      expect(get: '/users').to route_to('users#index')
+      expect(get: '/api/v1/users').to route_to('api/v1/users#index')
     end
+  end
 
+  describe 'GET /api/v1/users/1' do
     it 'routes to #show' do
-      expect(get: '/users/1').to route_to('users#show', id: '1')
+      expect(get: '/api/v1/users/1').to route_to('api/v1/users#show', id: '1')
     end
+  end
 
+  describe 'POST /api/v1/users' do
     it 'routes to #create' do
-      expect(post: '/users').to route_to('users#create')
+      expect(post: '/api/v1/users').to route_to('api/v1/users#create')
     end
+  end
 
+  describe 'PUT /api/v1/users/1' do
     it 'routes to #update via PUT' do
-      expect(put: '/users/1').to route_to('users#update', id: '1')
+      expect(put: '/api/v1/users/1').to route_to('api/v1/users#update', id: '1')
     end
+  end
 
+  describe 'PATCH /api/v1/users/1' do
     it 'routes to #update via PATCH' do
-      expect(patch: '/users/1').to route_to('users#update', id: '1')
+      expect(patch: '/api/v1/users/1').to route_to('api/v1/users#update', id: '1')
     end
+  end
 
+  describe 'DELETE /api/v1/users/1' do
     it 'routes to #destroy' do
-      expect(delete: '/users/1').to route_to('users#destroy', id: '1')
+      expect(delete: '/api/v1/users/1').to route_to('api/v1/users#destroy', id: '1')
     end
   end
 end

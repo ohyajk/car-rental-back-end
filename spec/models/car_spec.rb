@@ -1,5 +1,34 @@
 require 'rails_helper'
 
 RSpec.describe Car, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  subject do
+    myuser = User.create(name: 'Eddy')
+    Car.create(name: 'toyota', model: 'v8', description: 'the best car in the city', price: 200.7,
+               rent_per_day: 2, user_id: myuser.id)
+  end
+  before { subject.save }
+
+  it 'Should be valid ' do
+    expect(subject).to be_valid
+  end
+
+  it 'Name should not be nil' do
+    subject.name = nil
+    expect(subject).to_not be_valid
+  end
+
+  it 'car should have a description' do
+    subject.description = nil
+    expect(subject).to_not be_valid
+  end
+
+  it 'Price should me in decimals' do
+    subject.price = 200.4
+    expect(subject).to be_valid
+  end
+
+  it 'rent per day should be greater than or equal to zero' do
+    subject.rent_per_day = -1
+    expect(subject).to_not be_valid
+  end
 end

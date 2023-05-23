@@ -1,7 +1,7 @@
 require 'swagger_helper'
 
 describe 'Cars API' do
-  path '/cars' do
+  path '/api/v1/cars' do
     get 'Fetches all cars' do
       tags 'Cars'
       produces 'application/json'
@@ -13,6 +13,7 @@ describe 'Cars API' do
                  properties: {
                    id: { type: :integer },
                    name: { type: :string },
+                   model: { type: :string },
                    description: { type: :string },
                    rent_per_day: { type: :number },
                    user_id: { type: :integer }
@@ -39,18 +40,21 @@ describe 'Cars API' do
       }
 
       response '201', 'car created' do
-        let(:car) { { name: 'Car Name', description: 'Car Description', rent_per_day: 100, user_id: 1 } }
+        let(:car) do
+          { name: 'Car Name', description: 'Car Description', model: 'car model', price: 200, rent_per_day: 100,
+            user_id: 1 }
+        end
         run_test!
       end
 
       response '422', 'invalid request' do
-        let(:car) { { name: 'Ca', user_id: 1 } }
+        let(:car) { { name: 'Car Name', user_id: 1 } }
         run_test!
       end
     end
   end
 
-  path '/cars/{id}' do
+  path '/api/v1/cars/{id}' do
     get 'Retrieves a car' do
       tags 'Cars'
       produces 'application/json'

@@ -18,4 +18,10 @@ class Api::V1::UsersController < ApplicationController
       render json: { error: "username #{@user.errors[:name].first}" }, status: :bad_request
     end
   end
+
+  def destroy
+    @user = User.find(params[:id])
+    @user.destroy
+    head :ok
+  end
 end

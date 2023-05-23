@@ -9,7 +9,6 @@ gem 'rails', '~> 7.0.4', '>= 7.0.4.3'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.5.3'
 
-
 gem 'factory_bot_rails', '~> 6.2'
 
 # Use the Puma web server [https://github.com/puma/puma]

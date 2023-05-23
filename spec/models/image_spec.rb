@@ -3,9 +3,11 @@ require 'rails_helper'
 RSpec.describe Car, type: :model do
   subject do
     myuser = User.create(name: 'Eddy')
-    myCar = Car.create(name: 'toyota', model: 'v8', description: 'the best car in the city', price: 200.7,
-               rent_per_day: 2, user_id: myuser.id)
-    Image.create(url: "https://www.mbusa.com/content/dam/mb-nafta/us/myco/my23/g/class-page/series/2023-G-SUV-HERO-DR.jpg", car: myCar )
+    mycar = Car.create(name: 'toyota', model: 'v8', description: 'the best car in the city', price: 200.7,
+                       rent_per_day: 2, user_id: myuser.id)
+    Image.create(
+      url: 'https://www.mbusa.com/content/dam/mb-nafta/us/myco/my23/g/class-page/series/2023-G-SUV-HERO-DR.jpg', car: mycar
+    )
   end
   before { subject.save }
 
@@ -23,19 +25,24 @@ RSpec.describe Car, type: :model do
     expect(subject).to_not be_valid
   end
 
-    describe 'attributes' do
+  it 'Name should not be nil' do
+    subject.url = nil
+    expect(subject).to_not be_valid
+  end
+
+  describe 'attributes' do
     it 'should have a car association' do
       car = Car.create(name: 'Toyota')
-      image = Image.new(url: 'https://example.com/image.jpg', car: car)
+      image = Image.new(url: 'https://example.com/image.jpg', car:)
       expect(image.car).to eq(car)
     end
 
-    it 'should have a URL' do
+    it 'should have a working URL' do
       image = Image.new(url: 'https://example.com/image.jpg')
       expect(image.url).to eq('https://example.com/image.jpg')
     end
 
-    it 'should have a car association' do
+    it 'should have associations' do
       mycar = Car.create(name: 'Toyota')
       image = Image.new(url: 'https://example.com/image.jpg', car: mycar)
       expect(image.car).to eq(mycar)
@@ -47,5 +54,3 @@ RSpec.describe Car, type: :model do
     end
   end
 end
-
-

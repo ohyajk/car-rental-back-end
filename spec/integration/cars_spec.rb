@@ -40,7 +40,10 @@ describe 'Cars API' do
       }
 
       response '201', 'car created' do
-        let(:car) { { name: 'Car Name', description: 'Car Description', model: "car model", price: 200, rent_per_day: 100, user_id: 1 } }
+        let(:car) do
+          { name: 'Car Name', description: 'Car Description', model: 'car model', price: 200, rent_per_day: 100,
+            user_id: 1 }
+        end
         run_test!
       end
 

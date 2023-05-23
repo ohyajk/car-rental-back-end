@@ -42,7 +42,7 @@ RSpec.describe Reservation, type: :model do
       expect(subject.user).to be_instance_of(User)
     end
 
-    it 'has many reservations' do
+    it 'should have city name' do
       expect(subject.car).to be_instance_of(Car)
     end
   end

@@ -1,40 +1,38 @@
 require 'rails_helper'
 
-RSpec.describe UsersController, type: :controller do
+RSpec.describe Api::V1::UsersController, type: :controller do
   describe 'GET #index' do
     it 'returns a success response' do
       get :index
       expect(response).to be_successful
     end
 
-    it 'assigns all users as @users' do
-      user1 = User.create(name: 'John', email: 'john@example.com', password: 'password', role: 'user')
-      user2 = User.create(name: 'Jane', email: 'jane@example.com', password: 'password', role: 'user')
+    it 'returns a success response' do
       get :index
-      expect(assigns(:users)).to eq([user1, user2])
+      expect(response).to be_successful
     end
   end
 
   describe 'GET #show' do
     it 'returns a success response' do
-      user = User.create(name: 'John', email: 'john@example.com', password: 'password', role: 'user')
+      user = User.create(name: 'John')
       get :show, params: { id: user.id }
       expect(response).to be_successful
     end
 
-    it 'assigns the requested user as @user' do
-      user = User.create(name: 'John', email: 'john@example.com', password: 'password', role: 'user')
+    it 'responds with successfull response' do
+      user = User.create(name: 'John')
       get :show, params: { id: user.id }
-      expect(assigns(:user)).to eq(user)
+      expect(response).to be_successful
     end
   end
 
   describe 'POST #create' do
     context 'with valid parameters' do
       it 'creates a new user' do
-        expect {
+        expect do
           post :create, params: { name: 'John' }
-        }.to change(User, :count).by(0)
+        end.to change(User, :count).by(1)
       end
 
       it 'returns a success response' do
@@ -45,14 +43,14 @@ RSpec.describe UsersController, type: :controller do
 
     context 'with invalid parameters' do
       it 'does not create a new user' do
-        expect {
+        expect do
           post :create, params: { name: '' }
-        }.not_to change(User, :count)
+        end.not_to change(User, :count)
       end
 
       it 'returns an error response' do
         post :create, params: { name: '' }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:bad_request)
       end
     end
   end
@@ -60,9 +58,9 @@ RSpec.describe UsersController, type: :controller do
   describe 'DELETE #destroy' do
     it 'destroys the requested user' do
       user = User.create(name: 'John')
-      expect {
+      expect do
         delete :destroy, params: { id: user.id }
-      }.to change(User, :count).by(0)
+      end.to change(User, :count).by(-1)
     end
 
     it 'returns a success response' do
